@@ -1,6 +1,6 @@
 # getOffer
 
-Микросервисная система для расчета рекомендованного оффера Java-кандидату.
+Микросервисная система для расчета рекомендованного оффера
 
 ## Состав проекта
 
@@ -36,30 +36,3 @@ docker compose up --build -d
 - `offer-service`: `http://localhost:8082`
 - Swagger UI candidate-service: `http://localhost:8080/swagger-ui/index.html`
 - Swagger UI offer-service: `http://localhost:8082/swagger-ui/index.html`
-
-## Полезные команды
-
-```powershell
-docker compose ps
-docker compose logs -f
-docker compose down
-docker compose down -v --remove-orphans
-```
-
-## Что коммитить
-
-Нужно коммитить:
-
-- исходный код сервисов
-- `Dockerfile` каждого сервиса
-- `docker-compose.yml`
-- `.env.example`
-- `README.md`
-
-Не нужно коммитить:
-
-- `.env`
-- папки `build`
-- `.gradle`, `.gradle-home`
-- `.idea`
-- временные логи
