@@ -1,0 +1,46 @@
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    consumer:
+      group-id: ${CALCULATION_CONSUMER_GROUP:calculation-group}
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: ru.ashalyapin.calculationservice.event.CandidateCreatedEvent
+        spring.json.trusted.packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+logging:
+  level:
+    org.springframework.kafka: ${KAFKA_LOG_LEVEL:INFO}
+
+server:
+  port: 8081
+
+coefficients:
+  market: ${COEFFICIENT_MARKET:100}
+  experience-bonus-percent: ${COEFFICIENT_EXPERIENCE_BONUS_PERCENT:5}
+  base-salary:
+    junior: ${COEFFICIENT_BASE_SALARY_JUNIOR:150000}
+    middle: ${COEFFICIENT_BASE_SALARY_MIDDLE:250000}
+    senior: ${COEFFICIENT_BASE_SALARY_SENIOR:350000}
+
+app:
+  kafka:
+    topics:
+      candidate-created: ${TOPIC_CANDIDATE_CREATED:candidate-created}
+      calculation-completed: ${TOPIC_CALCULATION_COMPLETED:calculation-completed}

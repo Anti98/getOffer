@@ -1,0 +1,23 @@
+Нет, после каждого изменения не нужно пересобирать все сервисы. Пересобираешь только тот сервис, в котором менял код.
+
+Если ты поменял только candidate-service, достаточно:
+
+cd C:\Users\Andrey\IdeaProjects\getOffer
+docker compose up --build -d candidate-service
+Если хочешь пересобрать и перезапустить вообще весь стек целиком:
+
+cd C:\Users\Andrey\IdeaProjects\getOffer
+docker compose up --build -d
+Если нужен полный перезапуск контейнеров без удаления данных:
+
+docker compose down
+docker compose up --build -d
+Если нужен полностью “чистый” старт с очисткой volume данных:
+
+docker compose down -v --remove-orphans
+docker compose up --build -d
+Практически удобно так:
+
+менял один сервис — docker compose up --build -d <service-name>
+менял compose/инфраструктуру — docker compose up --build -d
+хочешь начать с нуля — docker compose down -v --remove-orphans и потом up --build -d
