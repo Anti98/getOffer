@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.ashalyapin.offerservice.model.OfferHistory;
 import ru.ashalyapin.offerservice.model.OfferStatus;
@@ -24,8 +25,10 @@ public class Offer {
     @Id
     private String id;
 
+    @Indexed
     private Long candidateId;
 
+    @Indexed(unique = true)
     private String eventId;
 
     private OfferStatus status;

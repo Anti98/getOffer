@@ -1,4 +1,4 @@
-package ru.ashalyapin.calculationservice.exception;
+package ru.ashalyapin.offerservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

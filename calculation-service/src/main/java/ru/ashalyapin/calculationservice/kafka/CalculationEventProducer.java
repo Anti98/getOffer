@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.ashalyapin.calculationservice.event.CalculationCompletedEvent;
+import ru.ashalyapin.calculationservice.exception.InfrastructureException;
+
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -20,15 +23,20 @@ public class CalculationEventProducer {
     public void send(CalculationCompletedEvent event) {
         String key = event.getCandidateId().toString();
 
-        kafkaTemplate.send(topic, key, event)
-                .whenComplete((result, ex) -> {
-                    if (ex == null) {
-                        log.info("CalculationCompletedEvent sent: candidateId={}, offset={}",
-                                event.getCandidateId(),
-                                result.getRecordMetadata().offset());
-                    } else {
-                        log.error("Failed to send CalculationCompletedEvent", ex);
-                    }
-                });
+        try {
+            var result = kafkaTemplate.send(topic, key, event).get();
+            log.info(
+                    "CalculationCompletedEvent sent: candidateId={}, partition={}, offset={}",
+                    event.getCandidateId(),
+                    result.getRecordMetadata().partition(),
+                    result.getRecordMetadata().offset()
+            );
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new InfrastructureException("Interrupted while sending CalculationCompletedEvent", e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            throw new InfrastructureException("Failed to send CalculationCompletedEvent", cause);
+        }
     }
 }

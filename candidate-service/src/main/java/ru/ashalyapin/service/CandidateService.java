@@ -26,6 +26,7 @@ public class CandidateService {
     private final CandidateEventProducer eventProducer;
 
 
+    @Transactional
     public CandidateDto registerCandidate(CandidateDto candidateDto) {
 
         candidateRepository.findByEmail(candidateDto.getEmail())

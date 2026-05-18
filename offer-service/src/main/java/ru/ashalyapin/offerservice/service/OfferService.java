@@ -1,6 +1,8 @@
 package ru.ashalyapin.offerservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ru.ashalyapin.offerservice.entity.Offer;
 import ru.ashalyapin.offerservice.event.CalculationCompletedEvent;
@@ -20,6 +22,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OfferService {
 
     private final OfferRepository offerRepository;
@@ -27,11 +30,6 @@ public class OfferService {
 
 
     public void handleCalculation(CalculationCompletedEvent event) {
-
-        if (offerRepository.existsByEventId(event.getEventId())) {
-            return;
-        }
-
         Offer offer = offerRepository
                 .findByCandidateId(event.getCandidateId())
                 .orElseGet(Offer::new);
@@ -83,7 +81,11 @@ public class OfferService {
             offer.getHistory().add(history);
         }
 
-        offerRepository.save(offer);
+        try {
+            offerRepository.save(offer);
+        } catch (DuplicateKeyException ex) {
+            log.info("Duplicate calculation event skipped: eventId={}", event.getEventId());
+        }
     }
 
 
